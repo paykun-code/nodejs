@@ -23,6 +23,9 @@ app.post('/start/payment', function (req, res) {
         obj.initOrder("ORD_" + biguint(random(8), 'dec'), '<productDescription>', '<amount>', '<successUrl>', '<failedUrl>');
         obj.addCustomer('<customerName>', '<customerEmail>', '<customerMobileNo>');
 
+        //Don't remove this below line
+        obj.setCustomFields({'udf_1': 'some dummy data'});
+
         let requestData = obj.submit();
         res.render(__dirname + '/views/request', {
             action:requestData.action,
