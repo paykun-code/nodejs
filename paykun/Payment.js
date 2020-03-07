@@ -193,9 +193,13 @@ var Payment =
             value: function(payment_id, callback) {
                 var request = require('request');
                 var config = require('../config/config.global');
+                var url = 'https://api.paykun.com/v1/merchant/transaction/'+payment_id;
+                if(config.IS_LIVE == false) {
+                    url = 'https://sandbox.paykun.com/api/v1/merchant/transaction/'+payment_id;
+                }
                 var options = {
                     'method': 'GET',
-                    'url': 'https://api.paykun.com/v1/merchant/transaction/'+payment_id,
+                    'url': url,
                     'headers': {
                         'MerchantId': config.MERCHANT_ID,
                         'AccessToken': config.ACCESS_TOKEN
