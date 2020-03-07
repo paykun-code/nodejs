@@ -130,23 +130,23 @@ var Payment =
         }, {
             key: "setCustomFields",
             value: function setCustomFields(customFields) {
-                if (customFields.hasOwnproperty('udf_1')) {
+                if (customFields.hasOwnProperty('udf_1')) {
                     this.udf_1 = customFields.udf_1;
                 }
 
-                if (customFields.hasOwnproperty('udf_2')) {
+                if (customFields.hasOwnProperty('udf_2')) {
                     this.udf_2 = customFields.udf_2;
                 }
 
-                if (customFields.hasOwnproperty('udf_3')) {
+                if (customFields.hasOwnProperty('udf_3')) {
                     this.udf_3 = customFields.udf_3;
                 }
 
-                if (customFields.hasOwnproperty('udf_4')) {
+                if (customFields.hasOwnProperty('udf_4')) {
                     this.udf_4 = customFields.udf_4;
                 }
 
-                if (customFields.hasOwnproperty('udf_5')) {
+                if (customFields.hasOwnProperty('udf_5')) {
                     this.udf_5 = customFields.udf_5;
                 }
             }
