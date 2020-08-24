@@ -87,6 +87,8 @@ var Payment =
 
             _defineProperty(this, "udf_5", void 0);
 
+            _defineProperty(this, "currency", void 0);
+
             this.merchantID = merchantID;
             this.accessToken = accessToken;
             this.enckey = enckey;
@@ -95,10 +97,11 @@ var Payment =
 
         _createClass(Payment, [{
             key: "initOrder",
-            value: function initOrder(orderId, purpose, amount, successUrl, failureUrl) {
+            value: function initOrder(orderId, purpose, amount, successUrl, failureUrl, currency = 'INR') {
                 this.orderId = orderId;
                 this.purpose = purpose;
                 this.amount = amount;
+                this.currency = currency;
                 this.successUrl = successUrl;
                 this.failureUrl = failureUrl; //this.isPassedValidationForInitOrder = true;
             }
@@ -177,6 +180,7 @@ var Payment =
                 dataArray['udf_3'] = this.udf_3 ? this.udf_3 : '';
                 dataArray['udf_4'] = this.udf_4 ? this.udf_4 : '';
                 dataArray['udf_5'] = this.udf_5 ? this.udf_5 : '';
+                dataArray['currency'] = this.currency ? this.currency : 'INR';
                 let encryptedData = this.encryptData(dataArray);
                 let requestData = {
                     action: (this.isLive) ? this.GATEWAY_URL_PROD : this.GATEWAY_URL_DEV,

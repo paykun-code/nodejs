@@ -20,7 +20,7 @@ app.post('/start/payment', function (req, res) {
     req.on('end', () => {
         let result = parse(body);
         let obj = new Payment(config.MERCHANT_ID, config.ACCESS_TOKEN, config.ENC_KEY, config.IS_LIVE);
-        obj.initOrder("ORD_" + biguint(random(8), 'dec'), '<productDescription>', '<amount>', '<successUrl>', '<failedUrl>');
+        obj.initOrder("ORD_" + biguint(random(8), 'dec'), '<productDescription>', '<amount>', '<successUrl>', '<failedUrl>', 'INR');
         obj.addCustomer('<customerName>', '<customerEmail>', '<customerMobileNo>');
 
         //Don't remove this below line
