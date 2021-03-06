@@ -89,7 +89,12 @@ function hashHmac(data, key){
     hmac.update(data);
     return hmac.digest('hex');
 }
+function hashHmacSignature(data, key){
+    let hmac = crypto.createHmac('sha512', key);
+    hmac.update(data);
+    return hmac.digest('hex');
+}
 
-module.exports = { encrypt, hash };
+module.exports = { encrypt, hashHmacSignature, hash };
 
 

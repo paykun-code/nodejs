@@ -276,8 +276,55 @@ var Payment =
                             </html>`;
 
                                 return htmlEntity;
-                                        }
-                                    }
+                }
+            },
+            {
+                key: "generateSignature",
+                value: function generateSignature(secretKey, params) {
+                    let dataString = "";
+                    Object.keys(params).forEach(function (key) {
+                        dataString = dataString + params[key] + "|";
+                    });
+                    dataString = dataString + "#";
+                    console.log(dataString);
+                    return Crypto.hashHmacSignature(dataString, secretKey);
+                }
+            },
+            {
+                key: "compareSignature",
+                value: function compareSignature(transactionData, receivedSignature) {
+                    var config = require('../config/config.global');
+                    let dataString = "";
+                    delete transactionData.signature;
+                    let flatJson = this.flattenJson(transactionData);
+                    Object.keys(flatJson).forEach(function(key) {
+                        if(flatJson[key] != null) {
+                            dataString = dataString + flatJson[key] + "|";
+                        } else {
+                            dataString = dataString + "|";
+                        }
+                    });
+                    dataString = dataString + "#";
+                    return Crypto.hashHmacSignature(dataString, this.enckey) === receivedSignature;
+                }
+            },
+            {
+                key: "flattenJson",
+                value: function flattenJson(obj, prefix, current) {
+                    prefix = prefix || [];
+                    current = current || {};
+
+                    // Remember kids, null is also an object!
+                    if (typeof (obj) === 'object' && obj !== null) {
+                        Object.keys(obj).forEach(key => {
+                            this.flattenJson(obj[key], prefix.concat(key), current)
+                        })
+                    } else {
+                        current[prefix.join('.')] = obj
+                    }
+                    return current
+                }
+            },
 
         ]);
             return Payment;
