@@ -16,33 +16,33 @@ app.post('/start/payment', function (req, res) {
         body += chunk.toString(); // convert Buffer to string
     });
     req.on('end', () => {
-        let result = parse(body);
-        let obj = new Payment(config.MERCHANT_ID, config.ACCESS_TOKEN, config.ENC_KEY, config.IS_LIVE);
-        let requestParams = {
-            page_number: 1,
-            limit: 10
-        };
-        let signature = obj.generateSignature(config.ENC_KEY, requestParams);
-        console.log(signature);
-        /*obj.initOrder("ORD_" + biguint(random(8), 'dec'), '<productDescription>', '<amount>', '<successUrl>', '<failedUrl>', 'INR');
-        obj.addCustomer('<customerName>', '<customerEmail>', '<customerMobileNo>');
-
-        //Don't remove this below line
-        obj.setCustomFields({'udf_1': 'some dummy data'});
-
-        let requestData = obj.submit();
-        res.render(__dirname + '/views/request', {
-            action:requestData.action,
-            encrypted_request: requestData.encrypted_request,
-            merchant_id: requestData.merchant_id,
-            access_token: requestData.access_token,
-        });*/
+        let body = '';
+        req.on('data', chunk => {
+            body += chunk.toString(); // convert Buffer to string
+        });
+        req.on('end', () => {
+            let result = parse(body);
+            console.log(result);
+            let obj = new Payment(config.MERCHANT_ID, config.ACCESS_TOKEN, config.ENC_KEY, config.IS_LIVE);
+            obj.initOrder("ORD_" + biguint(random(8), 'dec'), result.productName, result.amount,
+                'http://localhost:3000/paykun/success', 'http://localhost:3000/paykun/fail', 'INR');
+            obj.addCustomer(result.customerName, result.customerEmail, result.customerMobile);
+            obj.setCustomFields({'udf_1': 'some dummy data'});
+            let requestData = obj.submit();
+            res.render(__dirname + '/views/request', {
+                action:requestData.action,
+                encrypted_request: requestData.encrypted_request,
+                merchant_id: requestData.merchant_id,
+                access_token: requestData.access_token,
+            });
+        });
     });
 
 });
 
 app.get('/paykun/success', function (req, res) {
     let queryParam = req.query;
+    console.log(123123);
     let obj = new Payment(config.MERCHANT_ID, config.ACCESS_TOKEN, config.ENC_KEY, config.IS_LIVE);
     obj.getStatus(queryParam['payment-id'],
         function(transactionDetail){
