@@ -12,29 +12,24 @@ app.get('/', function (req, res) {
 
 app.post('/start/payment', function (req, res) {
     let body = '';
+    let requestData = null;
     req.on('data', chunk => {
         body += chunk.toString(); // convert Buffer to string
+        let result = parse(body);
+        let obj = new Payment(config.MERCHANT_ID, config.ACCESS_TOKEN, config.ENC_KEY, config.IS_LIVE);
+        obj.initOrder("ORD_" + biguint(random(8), 'dec'), result.productName, result.amount,
+            'http://localhost:3000/paykun/success', 'http://localhost:3000/paykun/fail', 'INR');
+        obj.addCustomer(result.customerName, result.customerEmail, result.customerMobile);
+        obj.setCustomFields({'udf_1': 'some dummy data'});
+        requestData = obj.submit();
     });
+
     req.on('end', () => {
-        let body = '';
-        req.on('data', chunk => {
-            body += chunk.toString(); // convert Buffer to string
-        });
-        req.on('end', () => {
-            let result = parse(body);
-            console.log(result);
-            let obj = new Payment(config.MERCHANT_ID, config.ACCESS_TOKEN, config.ENC_KEY, config.IS_LIVE);
-            obj.initOrder("ORD_" + biguint(random(8), 'dec'), result.productName, result.amount,
-                'http://localhost:3000/paykun/success', 'http://localhost:3000/paykun/fail', 'INR');
-            obj.addCustomer(result.customerName, result.customerEmail, result.customerMobile);
-            obj.setCustomFields({'udf_1': 'some dummy data'});
-            let requestData = obj.submit();
-            res.render(__dirname + '/views/request', {
-                action:requestData.action,
-                encrypted_request: requestData.encrypted_request,
-                merchant_id: requestData.merchant_id,
-                access_token: requestData.access_token,
-            });
+        res.render(__dirname + '/views/request', {
+            action:requestData.action,
+            encrypted_request: requestData.encrypted_request,
+            merchant_id: requestData.merchant_id,
+            access_token: requestData.access_token,
         });
     });
 
