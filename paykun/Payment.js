@@ -195,7 +195,7 @@ var Payment =
         {
             key:"getStatus",
             value: function(payment_id, callback) {
-                var request = require('request');
+                const request = require('request');
                 var config = require('../config/config.global');
                 var url = 'https://api.paykun.com/v1/merchant/transaction/'+payment_id;
                 if(config.IS_LIVE == false) {
