@@ -37,18 +37,38 @@ app.post('/start/payment', function (req, res) {
 
 app.get('/paykun/success', function (req, res) {
     let queryParam = req.query;
-    console.log(123123);
     let obj = new Payment(config.MERCHANT_ID, config.ACCESS_TOKEN, config.ENC_KEY, config.IS_LIVE);
-    obj.getStatus(queryParam['payment-id'],
-        function(transactionDetail){
-            if(transactionDetail.data.transaction.status == true) {
-                res.render(__dirname + '/views/success', {
-                    transactionId: transactionDetail.data.transaction.payment_id,
-                    status: transactionDetail.data.transaction.status,
-                    message: transactionDetail.data.message,
-                    amount: transactionDetail.data.transaction.order.gross_amount,
-                });
-            } else {
+    if(queryParam['payment-id']) {
+        obj.getStatus(queryParam['payment-id'],
+            function(transactionDetail){
+                if(transactionDetail.data.transaction.status == "Success") {
+                    res.render(__dirname + '/views/success', {
+                        transactionId: transactionDetail.data.transaction.payment_id,
+                        status: transactionDetail.data.transaction.status,
+                        message: transactionDetail.data.message,
+                        amount: transactionDetail.data.transaction.order.gross_amount,
+                    });
+                } else {
+                    res.render(__dirname + '/views/fail', {
+                        transactionId: transactionDetail.data.transaction.payment_id,
+                        status: transactionDetail.data.transaction.status,
+                        message: transactionDetail.data.message,
+                        amount: transactionDetail.data.transaction.order.gross_amount,
+                    });
+                }
+            }
+        );
+    } else {
+        console.log("Handle request without payment-id");
+    }
+
+});
+app.get('/paykun/fail', function (req, res) {
+    let queryParam = req.query;
+    if(queryParam['payment-id']) {
+        let obj = new Payment(config.MERCHANT_ID, config.ACCESS_TOKEN, config.ENC_KEY, config.IS_LIVE);
+        obj.getStatus(queryParam['payment-id'],
+            function(transactionDetail){
                 res.render(__dirname + '/views/fail', {
                     transactionId: transactionDetail.data.transaction.payment_id,
                     status: transactionDetail.data.transaction.status,
@@ -56,22 +76,11 @@ app.get('/paykun/success', function (req, res) {
                     amount: transactionDetail.data.transaction.order.gross_amount,
                 });
             }
-        }
-    );
-});
-app.get('/paykun/fail', function (req, res) {
-    let queryParam = req.query;
-    let obj = new Payment(config.MERCHANT_ID, config.ACCESS_TOKEN, config.ENC_KEY, config.IS_LIVE);
-    obj.getStatus(queryParam['payment-id'],
-        function(transactionDetail){
-            res.render(__dirname + '/views/fail', {
-                transactionId: transactionDetail.data.transaction.payment_id,
-                status: transactionDetail.data.transaction.status,
-                message: transactionDetail.data.message,
-                amount: transactionDetail.data.transaction.order.gross_amount,
-            });
-        }
-    );
+        );
+    } else {
+        console.log("Handle request without payment-id");
+    }
+
 });
 
 app.post('/process/webhook', express.json({type: '*/*'}), (req, res) => {
